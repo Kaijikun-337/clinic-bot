@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Laboratory Tests",
+    "name_ru": "Лабораторные анализы",
+    "name_uz": "Laboratoriya tahlillari",
+    "description": "Comprehensive diagnostic testing of blood, urine, and other samples",
+    "description_ru": "Комплексная диагностика крови, мочи и других биоматериалов",
+    "description_uz": "Qon, siydik va boshqa biomateriallarning kompleks diagnostikasi"
+  },
+  {
+    "name": "Ultrasound (USG)",
+    "name_ru": "УЗИ",
+    "name_uz": "UTT",
+    "description": "Diagnostic imaging using high-frequency sound waves",
+    "description_ru": "Диагностическая визуализация с использованием высокочастотных звуковых волн",
+    "description_uz": "Yuqori chastotali tovush to'lqinlari yordamida diagnostik vizuallashtirish"
+  },
+  {
+    "name": "3D X-ray",
+    "name_ru": "Рентген 3D",
+    "name_uz": "3D Rentgen",
+    "description": "Three-dimensional radiographic imaging for detailed diagnosis",
+    "description_ru": "Трехмерная рентгенографическая визуализация для детальной диагностики",
+    "description_uz": "Batafsil diagnostika uchun uch o'lchamli rentgenografik tasvirlash"
+  },
+  {
+    "name": "3D Panoramic X-ray",
+    "name_ru": "Панорама 3D",
+    "name_uz": "3D Panorama",
+    "description": "Wide-angle 3D dental and facial imaging",
+    "description_ru": "Широкоугольная 3D-визуализация зубов и челюстно-лицевой области",
+    "description_uz": "Tishlar va yuz-jag' sohasining keng burchakli 3D vizuallashuvi"
+  },
+  {
+    "name": "ECG",
+    "name_ru": "ЭКГ",
+    "name_uz": "EKG",
+    "description": "Recording of the electrical activity of the heart",
+    "description_ru": "Регистрация электрической активности сердца",
+    "description_uz": "Yurakning elektr faolligini qayd etish"
+  },
+  {
+    "name": "Inpatient Treatment Services",
+    "name_ru": "Услуги стационарного лечения",
+    "name_uz": "Statsionar davolash xizmatlari",
+    "description": "Medical care provided to patients staying in the hospital",
+    "description_ru": "Медицинская помощь пациентам, находящимся в условиях госпиталя",
+    "description_uz": "Kasalxonada yotib davolanayotgan bemorlarga tibbiy yordam ko'rsatish"
+  },
+  {
+    "name": "Pediatrician",
+    "name_ru": "Педиатр",
+    "name_uz": "Pediatr",
+    "description": "Specialized medical care for infants, children, and adolescents",
+    "description_ru": "Специализированная медицинская помощь младенцам, детям и подросткам",
+    "description_uz": "Chaqaloqlar, bolalar va o'smirlar uchun ixtisoslashtirilgan tibbiy yordam"
+  },
+  {
+    "name": "Gynecologist",
+    "name_ru": "Гинеколог",
+    "name_uz": "Ginekolog",
+    "description": "Specialist in the health of the female reproductive system",
+    "description_ru": "Специалист по здоровью женской репродуктивной системы",
+    "description_uz": "Ayollar reproduktiv tizimi salomatligi bo'yicha mutaxassis"
+  },
+  {
+    "name": "Cardiologist",
+    "name_ru": "Кардиолог",
+    "name_uz": "Kardiolog",
+    "description": "Specialist in diagnosing and treating heart conditions",
+    "description_ru": "Специалист по диагностике и лечению заболеваний сердца",
+    "description_uz": "Yurak kasalliklarini tashxislash va davolash bo'yicha mutaxassis"
+  },
+  {
+    "name": "ENT 24/7",
+    "name_ru": "ЛОР 24/7",
+    "name_uz": "LOR 24/7",
+    "description": "Round-the-clock ear, nose, and throat medical services",
+    "description_ru": "Круглосуточная медицинская помощь при заболеваниях уха, горла и носа",
+    "description_uz": "Quloq, tomoq va burun kasalliklari bo'yicha tunu-kun tibbiy yordam"
+  }
+]

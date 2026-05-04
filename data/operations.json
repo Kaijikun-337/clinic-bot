@@ -1,0 +1,90 @@
+[
+  {
+    "name": "Rhinoplasty",
+    "name_ru": "Ринопластика",
+    "name_uz": "Rinoplastika",
+    "description": "Surgical repair or reshaping of the nose",
+    "description_ru": "Хирургическая коррекция или изменение формы носа",
+    "description_uz": "Burun shaklini jarrohlik yo'li bilan tuzatish"
+  },
+  {
+    "name": "Septoplasty",
+    "name_ru": "Септопластика",
+    "name_uz": "Septoplastika",
+    "description": "Correction of deviated nasal septum",
+    "description_ru": "Коррекция искривления носовой перегородки",
+    "description_uz": "Burun to'sig'ining egriligini tuzatish"
+  },
+  {
+    "name": "Adenoidectomy",
+    "name_ru": "Аденоидэктомия",
+    "name_uz": "Adenoidotomiya",
+    "description": "Surgical removal of the adenoids",
+    "description_ru": "Хирургическое удаление аденоидов",
+    "description_uz": "Adenoidlarni jarrohlik yo'li bilan olib tashlash"
+  },
+  {
+    "name": "Facelift",
+    "name_ru": "Фейс лифтинг",
+    "name_uz": "Feys-lifting",
+    "description": "Surgical procedure to create a younger appearance in the face",
+    "description_ru": "Хирургическая операция для омоложения лица",
+    "description_uz": "Yuzni yoshartirish uchun jarrohlik amaliyoti"
+  },
+  {
+    "name": "Brow Lift",
+    "name_ru": "Броу лифтинг",
+    "name_uz": "Brou-lifting",
+    "description": "Procedure to raise the brows and reduce forehead wrinkles",
+    "description_ru": "Процедура поднятия бровей и разглаживания морщин на лбу",
+    "description_uz": "Qoshlarni ko'tarish va peshonadagi ajinlarni tekislash amaliyoti"
+  },
+  {
+    "name": "Otoplasty",
+    "name_ru": "Отопластика",
+    "name_uz": "Otoplastika",
+    "description": "Surgical procedure to change the shape or position of the ears",
+    "description_ru": "Хирургическое изменение формы или положения ушных раковин",
+    "description_uz": "Quloq shakli yoki holatini jarrohlik yo'li bilan o'zgartirish"
+  },
+  {
+    "name": "Tympanoplasty",
+    "name_ru": "Тимпанопластика",
+    "name_uz": "Timpanoplastika",
+    "description": "Surgical reconstruction of the eardrum",
+    "description_ru": "Хирургическое восстановление барабанной перепонки",
+    "description_uz": "Nog'ora pardasini jarrohlik yo'li bilan tiklash"
+  },
+  {
+    "name": "Abdominoplasty",
+    "name_ru": "Абдоминопластика",
+    "name_uz": "Abdominoplastika",
+    "description": "Procedure to remove excess fat and skin from the abdomen",
+    "description_ru": "Операция по удалению излишков жира и кожи в области живота",
+    "description_uz": "Qorin sohasidagi ortiqcha yog' va terini olib tashlash amaliyoti"
+  },
+  {
+    "name": "Liposuction",
+    "name_ru": "Липосакция",
+    "name_uz": "Liposaksiya",
+    "description": "Surgical removal of fat from specific areas of the body",
+    "description_ru": "Хирургическое удаление жировых отложений на определенных участках тела",
+    "description_uz": "Tananing ma'lum qismlaridan yog' qatlamini jarrohlik yo'li bilan olib tashlash"
+  },
+  {
+    "name": "Lipofilling",
+    "name_ru": "Липофилинг",
+    "name_uz": "Lipofilling",
+    "description": "Procedure of fat grafting to add volume to certain areas",
+    "description_ru": "Метод коррекции объемов тела с помощью пересадки собственной жировой ткани",
+    "description_uz": "Shaxsiy yog' to'qimalarini ko'chirib o'tkazish orqali tana hajmini tuzatish"
+  },
+  {
+    "name": "Breast Lift",
+    "name_ru": "Подтяжка груди",
+    "name_uz": "Ko'krakni ko'tarish",
+    "description": "Surgical procedure to raise and firm the breasts",
+    "description_ru": "Хирургическая операция по подтяжке и восстановлению формы груди",
+    "description_uz": "Ko'krakni ko'tarish va uning shaklini tiklash jarrohlik amaliyoti"
+  }
+]
