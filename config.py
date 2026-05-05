@@ -6,8 +6,9 @@ load_dotenv()
 
 class Config:
     BOT_TOKEN = os.getenv('BOT_TOKEN')
-    #GOOGLE_SHEETS_ID = os.getenv('GOOGLE_SHEETS_ID')
-    #GOOGLE_CREDENTIALS_FILE = os.getenv('GOOGLE_CREDENTIALS_FILE', 'credentials.json')
+    DATABASE_URL = os.getenv('DATABASE_URL')  # PostgreSQL on Render
+    GOOGLE_SHEETS_ID = os.getenv('GOOGLE_SHEETS_ID')
+    GOOGLE_CREDENTIALS_FILE = os.getenv('GOOGLE_CREDENTIALS_FILE', 'credentials.json')
     TIMEZONE = 'Asia/Tashkent'
     SLOT_DURATION_MINUTES = 20
     REMINDER_HOURS_BEFORE = 1

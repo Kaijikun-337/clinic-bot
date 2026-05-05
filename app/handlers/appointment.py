@@ -144,6 +144,7 @@ def procedure_keyboard(lang: str):
         name = svc.get(f'name_{lang}', svc.get('name'))
         buttons.append([
             InlineKeyboardButton(
+                f"💊 {name}",
                 callback_data=f"apt_proc_svc_{svc['name']}"
             )
         ])
