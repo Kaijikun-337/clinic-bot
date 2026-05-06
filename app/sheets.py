@@ -54,9 +54,9 @@ def _get_workbook():
 def _ensure_headers(sheet):
     """Make sure the sheet has headers in row 1."""
     expected = [
-        "ID", "Full Name", "Phone", "Procedure",
-        "Date", "Time", "Doctor", "Status",
-        "Created At"
+        "ID", "Полное Имя", "Телефон", "Процедура",
+        "Дата", "Время", "Доктор", "Статус",
+        "Создано"
     ]
 
     try:
@@ -71,7 +71,7 @@ def _ensure_headers(sheet):
     # Otherwise write them
     sheet.update(range_name="A1:I1", values=[expected])
     sheet.format("A1:I1", {
-        "bold": True,
+        "textFormat": {"bold":True},
         "backgroundColor": {"red": 0.2, "green": 0.2, "blue": 0.6},
         "horizontalAlignment": "CENTER"
     })
