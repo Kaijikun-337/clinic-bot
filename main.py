@@ -4,6 +4,7 @@ from telegram.ext import (
     CommandHandler,
     CallbackQueryHandler
 )
+import httpx
 
 from config import Config
 from app.db import init_db
@@ -12,6 +13,7 @@ from app.handlers.start import start, language_callback, main_menu_callback
 from app.handlers.appointment import get_appointment_handler
 from app.handlers.services import show_services
 from app.handlers.operations import show_operations
+from app.keep_alive import start_keep_alive
 
 logging.basicConfig(
     level=logging.INFO,
@@ -42,6 +44,7 @@ def main():
     
     # Start scheduler
     start_scheduler(app)
+    start_keep_alive()
     
     logger.info("🏥 Clinic Bot starting...")
     app.run_polling()
