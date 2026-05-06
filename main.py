@@ -4,7 +4,8 @@ from telegram.ext import (
     CommandHandler,
     CallbackQueryHandler
 )
-import httpx
+logging.getLogger("httpx").setLevel(logging.WARNING)
+
 
 from config import Config
 from app.db import init_db
@@ -47,6 +48,7 @@ def main():
     start_keep_alive()
     
     logger.info("🏥 Clinic Bot starting...")
+    
     app.run_polling()
 
 
