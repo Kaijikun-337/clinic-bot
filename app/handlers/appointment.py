@@ -23,6 +23,22 @@ ASK_NAME, ASK_PHONE, ASK_PROCEDURE, ASK_DATE, ASK_TIME, CONFIRM = range(6)
 
 tz = pytz.timezone(Config.TIMEZONE)
 
+DAY_NAMES = {
+    'en': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+    'ru': ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'],
+    'uz': ['Dushanba', 'Seshanba', 'Chorshanba', 'Payshanba', 'Juma', 'Shanba', 'Yakshanba'],
+}
+
+MONTH_NAMES = {
+    'en': ['January', 'February', 'March', 'April', 'May', 'June',
+           'July', 'August', 'September', 'October', 'November', 'December'],
+    'ru': ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+           'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'],
+    'uz': ['Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun',
+           'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'],
+}
+
+
 
 # ═══════════════════════════════════════════════════════════
 # HELPER: Generate available dates (next 7 days)
@@ -48,17 +64,21 @@ def _get_localized_procedure_name(key: str, type_: str, lang: str) -> str:
         pass
     return key
 
-def get_available_dates():
+
+def get_available_dates(lang: str = 'en'):
     """Generate next 7 days as selectable dates."""
     now = datetime.now(tz)
     dates = []
     
     for i in range(7):
         day = now + timedelta(days=i)
+        day_name = DAY_NAMES.get(lang, DAY_NAMES['en'])[day.weekday()]
+        month_name = MONTH_NAMES.get(lang, MONTH_NAMES['en'])[day.month - 1]
+        
         dates.append({
             'date': day.strftime("%d-%m-%Y"),
-            'display': day.strftime("%A %d %B"),
-            'day_name': day.strftime("%A")
+            'display': f"{day_name} {day.day} {month_name}",
+            'day_name': day_name
         })
     
     return dates
@@ -208,28 +228,20 @@ def confirm_keyboard(lang: str):
 
 async def start_booking(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Entry point: Ask for full name."""
-    query = update.callback_query
-    if query:
-        await query.answer()
-        chat_id = str(update.effective_user.id)
-        lang = get_user_language(chat_id)
-        
-        context.user_data['booking'] = {'chat_id': chat_id}
-        
-        await query.edit_message_text(
-            t(lang, 'ask_name'),
-            parse_mode='HTML'
-        )
+    chat_id = str(update.effective_user.id)
+    lang = get_user_language(chat_id)
+    
+    context.user_data['booking'] = {'chat_id': chat_id}
+    
+    # Store lang so other functions can use it
+    context.user_data['booking_lang'] = lang
+
+    text = t(lang, 'ask_name')
+    if update.callback_query:
+        await update.callback_query.answer()
+        await update.callback_query.edit_message_text(text, parse_mode='HTML')
     else:
-        chat_id = str(update.effective_user.id)
-        lang = get_user_language(chat_id)
-        
-        context.user_data['booking'] = {'chat_id': chat_id}
-        
-        await update.message.reply_text(
-            t(lang, 'ask_name'),
-            parse_mode='HTML'
-        )
+        await update.message.reply_text(text, parse_mode='HTML')
     
     return ASK_NAME
 
@@ -302,7 +314,7 @@ async def procedure_selected(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
     context.user_data['booking']['procedure'] = procedure
 
-    dates = get_available_dates()
+    dates = get_available_dates(lang)  # ← pass lang
 
     await query.edit_message_text(
         t(lang, 'ask_date'),
@@ -317,38 +329,39 @@ async def date_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Got date, ask for time."""
     query = update.callback_query
     await query.answer()
-    
+
     chat_id = str(update.effective_user.id)
     lang = get_user_language(chat_id)
-    
+
     if query.data == "apt_back_to_dates":
-        dates = get_available_dates()
+        dates = get_available_dates(lang)  # ← pass lang
         await query.edit_message_text(
             t(lang, 'ask_date'),
             reply_markup=dates_keyboard(dates, lang),
             parse_mode='HTML'
         )
         return ASK_DATE
-    
+
     date_str = query.data.replace("apt_date_", "")
     context.user_data['booking']['date'] = date_str
-    
+
     times = get_available_times(date_str)
-    
+
     if not times:
+        dates = get_available_dates(lang)  # ← pass lang
         await query.edit_message_text(
             t(lang, 'no_slots_available'),
-            reply_markup=dates_keyboard(get_available_dates(), lang),
+            reply_markup=dates_keyboard(dates, lang),
             parse_mode='HTML'
         )
         return ASK_DATE
-    
+
     await query.edit_message_text(
         t(lang, 'ask_time'),
         reply_markup=times_keyboard(times, lang),
         parse_mode='HTML'
     )
-    
+
     return ASK_TIME
 
 
@@ -356,24 +369,24 @@ async def time_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Got time, show confirmation."""
     query = update.callback_query
     await query.answer()
-    
+
     chat_id = str(update.effective_user.id)
     lang = get_user_language(chat_id)
-    
+
     if query.data == "apt_back_to_dates":
-        dates = get_available_dates()
+        dates = get_available_dates(lang)  # ← pass lang
         await query.edit_message_text(
             t(lang, 'ask_date'),
             reply_markup=dates_keyboard(dates, lang),
             parse_mode='HTML'
         )
         return ASK_DATE
-    
+
     time_str = query.data.replace("apt_time_", "")
     context.user_data['booking']['time'] = time_str
-    
+
     booking = context.user_data['booking']
-    
+
     summary = (
         f"📋 <b>{t(lang, 'booking_summary')}</b>\n\n"
         f"👤 {t(lang, 'field_name')}: <b>{booking['name']}</b>\n"
@@ -383,13 +396,13 @@ async def time_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"🕐 {t(lang, 'field_time')}: <b>{booking['time']}</b>\n\n"
         f"{t(lang, 'confirm_booking_prompt')}"
     )
-    
+
     await query.edit_message_text(
         summary,
         reply_markup=confirm_keyboard(lang),
         parse_mode='HTML'
     )
-    
+
     return CONFIRM
 
 
