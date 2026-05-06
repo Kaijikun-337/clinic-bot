@@ -28,6 +28,26 @@ tz = pytz.timezone(Config.TIMEZONE)
 # HELPER: Generate available dates (next 7 days)
 # ═══════════════════════════════════════════════════════════
 
+def _get_localized_procedure_name(key: str, type_: str, lang: str) -> str:
+    """Look up the localized name for a service or operation."""
+    import json
+    import os
+
+    if type_ == 'service':
+        path = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'services.json')
+    else:
+        path = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'operations.json')
+
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            items = json.load(f)
+        for item in items:
+            if item['name'] == key:
+                return item.get(f'name_{lang}', item.get('name'))
+    except Exception:
+        pass
+    return key
+
 def get_available_dates():
     """Generate next 7 days as selectable dates."""
     now = datetime.now(tz)
@@ -263,31 +283,33 @@ async def procedure_selected(update: Update, context: ContextTypes.DEFAULT_TYPE)
     """Got procedure, ask for date."""
     query = update.callback_query
     await query.answer()
-    
+
     chat_id = str(update.effective_user.id)
     lang = get_user_language(chat_id)
-    
+
     data = query.data
-    
+
     if data == "apt_proc_consultation":
-        procedure = "Consultation"
+        procedure = t(lang, 'consultation')
     elif data.startswith("apt_proc_svc_"):
-        procedure = data.replace("apt_proc_svc_", "")
+        key = data.replace("apt_proc_svc_", "")
+        procedure = _get_localized_procedure_name(key, 'service', lang)
     elif data.startswith("apt_proc_op_"):
-        procedure = data.replace("apt_proc_op_", "")
+        key = data.replace("apt_proc_op_", "")
+        procedure = _get_localized_procedure_name(key, 'operation', lang)
     else:
-        procedure = "General"
-    
+        procedure = t(lang, 'consultation')
+
     context.user_data['booking']['procedure'] = procedure
-    
+
     dates = get_available_dates()
-    
+
     await query.edit_message_text(
         t(lang, 'ask_date'),
         reply_markup=dates_keyboard(dates, lang),
         parse_mode='HTML'
     )
-    
+
     return ASK_DATE
 
 
@@ -375,13 +397,13 @@ async def booking_confirmed(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Save booking to DB and Google Sheets, notify admin."""
     query = update.callback_query
     await query.answer()
-    
+
     chat_id = str(update.effective_user.id)
     lang = get_user_language(chat_id)
-    
+
     booking = context.user_data.get('booking', {})
-    
-    # 1. Save to SQLite
+
+    # 1. Save to DB
     appointment_id = create_appointment(
         full_name=booking['name'],
         phone=booking['phone'],
@@ -389,11 +411,11 @@ async def booking_confirmed(update: Update, context: ContextTypes.DEFAULT_TYPE):
         date=booking['date'],
         time=booking['time']
     )
-    
+
     if not appointment_id:
         await query.edit_message_text(t(lang, 'booking_error'))
         return ConversationHandler.END
-    
+
     # 2. Save to Google Sheets
     try:
         from app.sheets import append_appointment
@@ -410,16 +432,16 @@ async def booking_confirmed(update: Update, context: ContextTypes.DEFAULT_TYPE):
         logger.info(f"✅ Appointment saved to Google Sheets")
     except Exception as e:
         logger.error(f"⚠️ Google Sheets failed (appointment still saved locally): {e}")
-    
-    # 3. Notify admins
-    admin_msg = t('en', 'admin_new_booking').format(
+
+    # 3. Notify admins — use patient's language
+    admin_msg = t(lang, 'admin_new_booking').format(
         name=booking['name'],
         phone=booking['phone'],
         procedure=booking['procedure'],
         date=booking['date'],
         time=booking['time']
     )
-    
+
     for admin_id in Config.ADMIN_IDS:
         try:
             await context.bot.send_message(
@@ -429,16 +451,16 @@ async def booking_confirmed(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
         except Exception as e:
             logger.error(f"Failed to notify admin {admin_id}: {e}")
-    
+
     # 4. Confirm to patient
     await query.edit_message_text(
         t(lang, 'booking_confirmed'),
         parse_mode='HTML'
     )
-    
+
     # Cleanup
     context.user_data.pop('booking', None)
-    
+
     return ConversationHandler.END
 
 

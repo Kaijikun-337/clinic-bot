@@ -2,9 +2,9 @@
 
 import os
 import logging
+import gspread
 from datetime import datetime
 import pytz
-import gspread
 
 from config import Config
 
@@ -14,6 +14,33 @@ tz = pytz.timezone(Config.TIMEZONE)
 # Lazy-loaded client
 _sheets_client = None
 _workbook = None
+
+# ── Russian translations for sheets ──
+HEADERS_RU = [
+    "ID", "ФИО", "Телефон", "Процедура",
+    "Дата", "Время", "Врач", "Статус",
+    "Создано"
+]
+
+STATUS_RU = {
+    'Scheduled': 'Запланировано',
+    'Cancelled': 'Отменено',
+    'Completed': 'Завершено',
+    'In Progress': 'В процессе',
+    'No-Show': 'Не явился',
+}
+
+DOCTOR_RU = {
+    'Unassigned': 'Не назначен',
+}
+
+
+def _translate_status(status: str) -> str:
+    return STATUS_RU.get(status, status)
+
+
+def _translate_doctor(doctor: str) -> str:
+    return DOCTOR_RU.get(doctor, doctor)
 
 
 def _get_client():
@@ -29,7 +56,6 @@ def _get_client():
             f"Place your service account JSON in the project root."
         )
 
-    import gspread
     _sheets_client = gspread.service_account(filename=creds_path)
     logger.info("✅ Google Sheets client initialized")
     return _sheets_client
@@ -52,65 +78,57 @@ def _get_workbook():
 
 
 def _ensure_headers(sheet):
-    """Make sure the sheet has headers in row 1."""
-    expected = [
-        "ID", "Полное Имя", "Телефон", "Процедура",
-        "Дата", "Время", "Доктор", "Статус",
-        "Создано"
-    ]
-
+    """Make sure the sheet has Russian headers in row 1."""
     try:
         first_row = sheet.row_values(1)
     except Exception:
         first_row = []
 
-    # If headers already match, skip
-    if first_row == expected:
+    if first_row == HEADERS_RU:
         return
 
-    # Otherwise write them
-    sheet.update(range_name="A1:I1", values=[expected])
+    sheet.update(range_name="A1:I1", values=[HEADERS_RU])
     sheet.format("A1:I1", {
-        "textFormat": {"bold":True},
+        "textFormat": {"bold": True},
         "backgroundColor": {"red": 0.2, "green": 0.2, "blue": 0.6},
         "horizontalAlignment": "CENTER"
     })
-    logger.info("✅ Sheet headers written")
+    logger.info("✅ Sheet headers written (Russian)")
 
 
 def _get_sheet():
-    """Get the 'Appointments' sheet (creates if missing)."""
+    """Get the 'Записи' sheet (creates if missing)."""
     wb = _get_workbook()
 
     try:
-        sheet = wb.worksheet("Appointments")
+        sheet = wb.worksheet("Записи")
     except gspread.WorksheetNotFound:
         sheet = wb.add_worksheet(
-            title="Appointments",
+            title="Записи",
             rows=1000,
             cols=9
         )
-        logger.info("✅ Created 'Appointments' worksheet")
+        logger.info("✅ Created 'Записи' worksheet")
 
     _ensure_headers(sheet)
     return sheet
 
 
 def append_appointment(data: dict):
-    """Append a single appointment row to Google Sheets."""
+    """Append a single appointment row to Google Sheets (Russian)."""
     sheet = _get_sheet()
 
     now = datetime.now(tz).strftime("%d-%m-%Y %H:%M")
 
     row = [
         data.get('id', ''),
-        data.get('full_name', ''),  
+        data.get('full_name', ''),
         data.get('phone', ''),
         data.get('procedure', ''),
         data.get('date', ''),
         data.get('time', ''),
-        data.get('doctor', 'Unassigned'),
-        data.get('status', 'Scheduled'),
+        _translate_doctor(data.get('doctor', 'Unassigned')),
+        _translate_status(data.get('status', 'Scheduled')),
         now
     ]
 
@@ -119,14 +137,13 @@ def append_appointment(data: dict):
 
 
 def update_appointment_status(appointment_id: int, status: str):
-    """Find a row by ID and update its Status column (H)."""
+    """Find a row by ID and update its Status column (H) in Russian."""
     sheet = _get_sheet()
 
-    # Find the row with matching ID (column A)
     cell = sheet.find(str(appointment_id), in_column=1)
     if cell:
-        sheet.update_cell(cell.row, 8, status)  # H = column 8
-        logger.info(f"✅ Status updated in Sheets: #{appointment_id} → {status}")
+        sheet.update_cell(cell.row, 8, _translate_status(status))
+        logger.info(f"✅ Status updated in Sheets: #{appointment_id} → {_translate_status(status)}")
     else:
         logger.warning(f"⚠️ Appointment #{appointment_id} not found in Sheets")
 
@@ -137,8 +154,8 @@ def update_appointment_doctor(appointment_id: int, doctor_name: str):
 
     cell = sheet.find(str(appointment_id), in_column=1)
     if cell:
-        sheet.update_cell(cell.row, 7, doctor_name)  # G = column 7
-        logger.info(f"✅ Doctor updated in Sheets: #{appointment_id} → {doctor_name}")
+        sheet.update_cell(cell.row, 7, _translate_doctor(doctor_name))
+        logger.info(f"✅ Doctor updated in Sheets: #{appointment_id} → {_translate_doctor(doctor_name)}")
     else:
         logger.warning(f"⚠️ Appointment #{appointment_id} not found in Sheets")
 
