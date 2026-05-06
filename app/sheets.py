@@ -4,6 +4,7 @@ import os
 import logging
 from datetime import datetime
 import pytz
+import gspread
 
 from config import Config
 
