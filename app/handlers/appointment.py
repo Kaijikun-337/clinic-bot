@@ -398,6 +398,7 @@ async def booking_confirmed(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         from app.sheets import append_appointment
         append_appointment({
+            'id': appointment_id,
             'full_name': booking['name'],
             'procedure': booking['procedure'],
             'doctor': 'Unassigned',

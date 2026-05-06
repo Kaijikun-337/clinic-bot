@@ -279,6 +279,15 @@ def assign_doctor(appointment_id: int, doctor_name: str):
             (doctor_name, appointment_id)
         )
         conn.commit()
+
+        # Sync to Google Sheets
+        if cur.rowcount > 0:
+            try:
+                from app.sheets import update_appointment_doctor
+                update_appointment_doctor(appointment_id, doctor_name)
+            except Exception as e:
+                logger.warning(f"⚠️ Sheets sync failed: {e}")
+
         return True
     except Exception as e:
         logger.error(f"❌ assign_doctor failed: {e}")
@@ -298,6 +307,15 @@ def update_status(appointment_id: int, status: str):
             (status, appointment_id)
         )
         conn.commit()
+
+        # Sync to Google Sheets
+        if cur.rowcount > 0:
+            try:
+                from app.sheets import update_appointment_status
+                update_appointment_status(appointment_id, status)
+            except Exception as e:
+                logger.warning(f"⚠️ Sheets sync failed: {e}")
+
         return True
     except Exception as e:
         logger.error(f"❌ update_status failed: {e}")
