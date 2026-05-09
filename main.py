@@ -51,10 +51,13 @@ def main():
     logger.info("🏥 Clinic Bot starting...")
 
     try:
-        app.run_polling()
+        app.run_polling(timeout=10, drop_pending_updates=True)
     except Exception as e:
         logger.critical("Bot crashed: %s", e, exc_info=True)
-        os._exit(1)  # kill Flask thread too so Render restarts the whole service
+    else:
+        logger.critical("Polling stopped unexpectedly")
+    finally:
+        os._exit(1)  # kill all threads so Render restarts the service
 
 
 if __name__ == '__main__':
