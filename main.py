@@ -1,4 +1,5 @@
 import logging
+import os
 from telegram.ext import (
     ApplicationBuilder,
     CommandHandler,
@@ -48,8 +49,12 @@ def main():
     start_keep_alive()
     
     logger.info("🏥 Clinic Bot starting...")
-    
-    app.run_polling()
+
+    try:
+        app.run_polling()
+    except Exception as e:
+        logger.critical("Bot crashed: %s", e, exc_info=True)
+        os._exit(1)  # kill Flask thread too so Render restarts the whole service
 
 
 if __name__ == '__main__':
